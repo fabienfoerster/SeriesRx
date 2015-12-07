@@ -5,7 +5,7 @@
 'use strict';
 
 var React = require('react-native');
-var config = require('./config.js')
+
 var {
   AppRegistry,
   Image,
@@ -116,4 +116,4 @@ var styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('SeriesRx', () => SeriesRX);
+AppRegistry.registerComponent('SeriesRx', () => SeriesRx);
