@@ -34,6 +34,7 @@ var SeriesRx = React.createClass({
       logged: false,
       token : "",
       login : "",
+      loginError : "",
       password : "",
     };
   },
@@ -75,11 +76,19 @@ var SeriesRx = React.createClass({
     })
     .then((response) => response.json())
     .then((responseData) => {
-      this.setState({
-        token: responseData.token,
-        logged: true,
-      });
-      this.fetchData(this.state.token);
+      if(responseData.errors.length === 1) {
+        this.setState({
+          loginError : responseData.errors[0].text,
+          login : "",
+          password: ""
+        });
+      } else {
+        this.setState({
+          token: responseData.token,
+          logged: true,
+        });
+        this.fetchData(this.state.token);
+      }
     })
     .done();
   },
@@ -106,17 +115,20 @@ var SeriesRx = React.createClass({
   renderLoginView: function() {
     return (
       <View>
-      <TextInput  value={this.state.login} onChangeText={(login) => this.setState({login})} placeholder="Enter your login" />
-      <TextInput value={this.state.password} onChangeText={(password) => this.setState({password})}
-      placeholder="Enter your password"
-      secureTextEntry={true} />
-      <TouchableNativeFeedback
+        <TextInput  value={this.state.login} onChangeText={(login) => this.setState({login})} placeholder="Enter your login" />
+        <TextInput value={this.state.password} onChangeText={(password) => this.setState({password})}
+        placeholder="Enter your password"
+        secureTextEntry={true} />
+        <TouchableNativeFeedback
       onPress={this.betaseriesLogin}
       background={TouchableNativeFeedback.Ripple() }>
-      <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
-      <Text style={{margin: 30}}>Login</Text>
-      </View>
-      </TouchableNativeFeedback>
+          <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
+          <Text style={{margin: 30}}>Login</Text>
+          </View>
+          </TouchableNativeFeedback>
+        <View style={{ height: 100, backgroundColor: 'green'}}>
+          <Text> {this.state.loginError}</Text>
+        </View>
       </View>
     );
 
