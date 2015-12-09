@@ -1,25 +1,28 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
+* Sample React Native App
+* https://github.com/facebook/react-native
+*/
 'use strict';
 
 var React = require('react-native');
-
+var config = require('./config.js');
+var md5 = require('md5');
 var {
   AppRegistry,
   Image,
   ListView,
+  ToolbarAndroid,
   StyleSheet,
   Text,
+  TextInput,
+  TouchableNativeFeedback,
   View,
 } = React;
 
-var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
-var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
-var PAGE_SIZE = 25;
-var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
-var REQUEST_URL = API_URL + PARAMS;
+var API_KEY = config.betaseries_key;
+
+
+
 
 var SeriesRx = React.createClass({
   getInitialState: function() {
@@ -28,60 +31,115 @@ var SeriesRx = React.createClass({
         rowHasChanged: (row1, row2) => row1 !== row2,
       }),
       loaded: false,
+      logged: false,
+      token : "",
+      login : "",
+      password : "",
     };
   },
 
   componentDidMount: function() {
-    this.fetchData();
+
   },
 
-  fetchData: function() {
+  fetchData: function(token) {
+    var EPISODES_URL = 'https://api.betaseries.com/episodes/list';
+    var LIMIT = 1;
+    var EPISODES_PARAMS = '?key=' + API_KEY + '&limit=' + LIMIT + '&v=2.4&token=' + token;
+    var REQUEST_URL = EPISODES_URL + EPISODES_PARAMS;
     fetch(REQUEST_URL)
-      .then((response) => response.json())
-      .then((responseData) => {
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
-          loaded: true,
-        });
-      })
-      .done();
+    .then((response) => response.json())
+    .then((responseData) => {
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(responseData.shows),
+        loaded: true,
+      });
+    })
+    .done();
+  },
+
+  betaseriesLogin: function() {
+    var AUTH_URL = 'https://api.betaseries.com/members/auth';
+    var PARAMS = '?key=' + API_KEY;
+    var REQUEST_URL = AUTH_URL + PARAMS ;
+    var formData = new FormData();
+    formData.append("login",this.state.login);
+    formData.append("password",md5(this.state.password));
+    fetch(REQUEST_URL, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      this.setState({
+        token: responseData.token,
+        logged: true,
+      });
+      this.fetchData(this.state.token);
+    })
+    .done();
   },
 
   render: function() {
+    if(!this.state.logged) {
+      return this.renderLoginView();
+    }
+
     if (!this.state.loaded) {
       return this.renderLoadingView();
     }
 
     return (
+
       <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderMovie}
-        style={styles.listView}
+      dataSource={this.state.dataSource}
+      renderRow={this.renderEpisode}
+      style={styles.listView}
       />
     );
+  },
+
+  renderLoginView: function() {
+    return (
+      <View>
+      <TextInput  value={this.state.login} onChangeText={(login) => this.setState({login})} placeholder="Enter your login" />
+      <TextInput value={this.state.password} onChangeText={(password) => this.setState({password})}
+      placeholder="Enter your password"
+      secureTextEntry={true} />
+      <TouchableNativeFeedback
+      onPress={this.betaseriesLogin}
+      background={TouchableNativeFeedback.Ripple() }>
+      <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
+      <Text style={{margin: 30}}>Login</Text>
+      </View>
+      </TouchableNativeFeedback>
+      </View>
+    );
+
   },
 
   renderLoadingView: function() {
     return (
       <View style={styles.container}>
-        <Text>
-          Loading movies...
-        </Text>
+      <Text>
+      Loading episodes...
+      </Text>
       </View>
     );
   },
 
-  renderMovie: function(movie) {
+  renderEpisode: function(show) {
     return (
+
       <View style={styles.container}>
-        <Image
-          source={{uri: movie.posters.thumbnail}}
-          style={styles.thumbnail}
-        />
-        <View style={styles.rightContainer}>
-          <Text style={styles.title}>{movie.title}</Text>
-          <Text style={styles.year}>{movie.year}</Text>
-        </View>
+      <View style={styles.rightContainer}>
+      <Text style={styles.title}>{show.title}- S{show.unseen[0].season}E{show.unseen[0].episode}</Text>
+      <Text style={styles.year}>{show.unseen[0].description}</Text>
+      </View>
       </View>
     );
   },
@@ -100,7 +158,6 @@ var styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginBottom: 8,
     textAlign: 'center',
   },
   year: {
