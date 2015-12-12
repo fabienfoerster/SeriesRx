@@ -9,6 +9,8 @@ var  {
   StyleSheet,
 } = React;
 
+var Show = require('./Show');
+
 var UnseenShowList = React.createClass({
 
   getInitialState: function() {
@@ -32,10 +34,14 @@ var UnseenShowList = React.createClass({
     return (
       <ListView
         dataSource={this.state.dataSource}
-        renderRow={this.renderEpisode}
+        renderRow={this.renderShow}
         style={styles.listView}
         />
     );
+  },
+
+  actualize: function() {
+    this.fetchData();
   },
 
   fetchData: function() {
@@ -64,18 +70,11 @@ var UnseenShowList = React.createClass({
     );
   },
 
-  renderEpisode: function(show) {
-    return (
-      <TouchableNativeFeedback
 
-        background={TouchableNativeFeedback.Ripple() }>
-        <View style={styles.container}>
-          <View style={styles.rightContainer}>
-            <Text style={styles.title}>{show.title}- {show.unseen[0].code}</Text>
-            <Text style={styles.year}>Remaining : {show.remaining}</Text>
-          </View>
-        </View>
-      </TouchableNativeFeedback>
+
+  renderShow: function(show) {
+    return (
+      <Show show={show} apiKey={this.props.apiKey} />
     );
   },
 
@@ -93,16 +92,6 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-  },
-  rightContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  year: {
-    textAlign: 'center',
   },
 });
 
