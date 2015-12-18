@@ -12,7 +12,8 @@ var Episode = React.createClass({
   render: function() {
     return (
       <TouchableNativeFeedback
-        background={TouchableNativeFeedback.Ripple() }>
+        background={TouchableNativeFeedback.Ripple()}
+        onPress={this.watchedEpisode}>
         <View style={styles.rightContainer}>
           <Text style={styles.title}>{this.props.title}- {this.props.code}</Text>
         </View>
@@ -22,10 +23,10 @@ var Episode = React.createClass({
 
   watchedEpisode: function(){
     var BASE_URL = 'https://api.betaseries.com/episodes/watched';
-    var PARAMS = '?key=' + this.props.apiKey;
+    var PARAMS = '?key=' + this.props.apiKey + "&v=2.4" + "&token=" + this.props.token;
     var REQUEST_URL = BASE_URL + PARAMS;
     var formData = new FormData();
-    formData.append('id',this.props.show.id);
+    formData.append("id",String(this.props.id));
     fetch(REQUEST_URL, {
       method: 'POST',
       headers: {
@@ -36,13 +37,12 @@ var Episode = React.createClass({
     })
     .then((response) => response.json())
     .then((responseData) => {
-      console.log(responseData);
-      this.props.action();
+      this.props.refresh();
     })
     .done();
 
   },
-  
+
 });
 
 var styles = StyleSheet.create({

@@ -18,39 +18,15 @@ var Show = React.createClass({
   render: function() {
     return (
 
-        <View style={styles.container}>
-          <Text>{this.props.show.title}</Text>
-          {this.props.show.unseen.map(function(episode) {
-            return <Episode title={episode.title} code={episode.code} key={episode.id} />
-          })}
-        </View>
+      <View style={styles.container}>
+        <Text>{this.props.show.title}</Text>
+        {this.props.show.unseen.map(episode => {
+          return <Episode {...this.props} title={episode.title} code={episode.code} key={episode.id} id={episode.id}  />
+        })}
+      </View>
 
     );
   },
-
-  watchedEpisode: function(){
-    var BASE_URL = 'https://api.betaseries.com/episodes/watched';
-    var PARAMS = '?key=' + this.props.apiKey;
-    var REQUEST_URL = BASE_URL + PARAMS;
-    var formData = new FormData();
-    formData.append('id',this.props.show.id);
-    fetch(REQUEST_URL, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
-      body: formData
-    })
-    .then((response) => response.json())
-    .then((responseData) => {
-      console.log(responseData);
-      this.props.action();
-    })
-    .done();
-
-  },
-
 });
 
 var styles = StyleSheet.create({

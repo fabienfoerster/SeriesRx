@@ -74,7 +74,7 @@ var UnseenShowList = React.createClass({
 
   renderShow: function(show) {
     return (
-      <Show show={show} apiKey={this.props.apiKey} />
+      <Show show={show} {...this.props} refresh={this.actualize} />
     );
   },
 
