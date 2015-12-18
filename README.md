@@ -5,6 +5,6 @@ A mobile app for Betaseries using React native
 In order for this project to work you need to add a file named *config.js* at the root of the project containing the follwing code :
 ```javascript
 module.exports = {
-  betaseries-key: 'your betaseries api key'
+  betaseries_key: 'your betaseries api key'
 }
 ```
