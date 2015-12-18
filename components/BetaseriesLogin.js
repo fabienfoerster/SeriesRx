@@ -7,11 +7,12 @@ var {
   TextInput,
   Text,
   TouchableNativeFeedback,
+  AsyncStorage,
 
 } = React;
 
 var md5 = require('md5');
-
+var STORAGE_KEY = '@SeriesRx:betaseries:key';
 var BetaseriesLogin = React.createClass({
   getInitialState: function() {
     return {
@@ -21,7 +22,28 @@ var BetaseriesLogin = React.createClass({
     };
   },
 
+  componentDidMount : function() {
+    this._loadToken().done();
+  },
 
+  async _loadToken() {
+    try {
+      var value = await AsyncStorage.getItem(STORAGE_KEY);
+      if(value != null) {
+        this.props.addToken(value);
+      }
+    } catch(error) {
+      console.log(error);
+    }
+  },
+
+  async _storeToken(token) {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY,token)
+    } catch (error) {
+      console.log(error);
+    }
+  },
 
   betaseriesLogin: function() {
     var AUTH_URL = 'https://api.betaseries.com/members/auth';
@@ -47,6 +69,7 @@ var BetaseriesLogin = React.createClass({
           password: ""
         });
       } else {
+        this._storeToken(responseData.token).done();
         this.props.addToken(responseData.token);
       }
     })
