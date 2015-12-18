@@ -22,7 +22,9 @@ var {
 
 var UnseenShowList = require('./components/UnseenShowList');
 var BetaseriesLogin = require('./components/BetaseriesLogin');
-
+var toolbarActions = [
+  {title: 'Log out',},
+];
 
 var SeriesRx = React.createClass({
   getInitialState: function() {
@@ -45,6 +47,17 @@ var SeriesRx = React.createClass({
     }
   },
 
+  async _removeToken() {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+      this.setState({
+        token: "",
+      });
+    } catch(error) {
+      console.log(error);
+    }
+  },
+
   componentDidMount: function() {
     this._loadToken().done();
   },
@@ -61,6 +74,8 @@ var SeriesRx = React.createClass({
 
 
 
+
+
   render: function() {
     if(! this.state.token) {
       return (
@@ -71,9 +86,21 @@ var SeriesRx = React.createClass({
 
 
     return (
-
-      <UnseenShowList apiKey={this.state.apiKey} token={this.state.token} />
+      <View style={{flex: 1}}>
+        <ToolbarAndroid
+          actions={toolbarActions}
+          onActionSelected={this._onActionSelected}
+          style={styles.toolbar}
+          title="SeriesRx" />
+        <UnseenShowList apiKey={this.state.apiKey} token={this.state.token} />
+      </View>
     );
+  },
+
+  _onActionSelected : function(position) {
+    if(position === 0) { // index of 'Log out'
+      this._removeToken().done();
+    }
   },
 
 
@@ -84,7 +111,10 @@ var SeriesRx = React.createClass({
 });
 
 var styles = StyleSheet.create({
-
+  toolbar: {
+    backgroundColor: 'purple',
+    height: 56,
+  },
 });
 
 AppRegistry.registerComponent('SeriesRx', () => SeriesRx);
