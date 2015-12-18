@@ -1,3 +1,3 @@
 module.exports = {
-  betaseries_key: 'xxx'
+  betaseries_key: 'xxxx'
 }
