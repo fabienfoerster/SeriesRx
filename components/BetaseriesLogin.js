@@ -12,7 +12,7 @@ var {
 } = React;
 
 var md5 = require('md5');
-var STORAGE_KEY = '@SeriesRx:betaseries:key';
+var STORAGE_KEY = require("../config.js").STORAGE_KEY;
 var BetaseriesLogin = React.createClass({
   getInitialState: function() {
     return {
@@ -20,21 +20,6 @@ var BetaseriesLogin = React.createClass({
       password: "",
       loginError: "",
     };
-  },
-
-  componentDidMount : function() {
-    this._loadToken().done();
-  },
-
-  async _loadToken() {
-    try {
-      var value = await AsyncStorage.getItem(STORAGE_KEY);
-      if(value != null) {
-        this.props.addToken(value);
-      }
-    } catch(error) {
-      console.log(error);
-    }
   },
 
   async _storeToken(token) {

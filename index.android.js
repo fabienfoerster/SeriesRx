@@ -6,7 +6,7 @@
 
 var React = require('react-native');
 var config = require('./config.js');
-
+var STORAGE_KEY = config.STORAGE_KEY;
 var {
   AppRegistry,
   Image,
@@ -17,6 +17,7 @@ var {
   TextInput,
   TouchableNativeFeedback,
   View,
+  AsyncStorage,
 } = React;
 
 var UnseenShowList = require('./components/UnseenShowList');
@@ -31,9 +32,24 @@ var SeriesRx = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-
+  async _loadToken() {
+    try {
+      var value = await AsyncStorage.getItem(STORAGE_KEY);
+      if(value != null) {
+        this.setState({
+          token : value,
+        });
+      }
+    } catch(error) {
+      console.log(error);
+    }
   },
+
+  componentDidMount: function() {
+    this._loadToken().done();
+  },
+
+
 
   addToken: function(token) {
     this.setState({
