@@ -14,8 +14,8 @@ var Episode = React.createClass({
       <TouchableNativeFeedback
         background={TouchableNativeFeedback.Ripple()}
         onPress={this.watchedEpisode}>
-        <View style={styles.rightContainer}>
-          <Text style={styles.title}>{this.props.title}- {this.props.code}</Text>
+        <View style={styles.episodeContainer}>
+          <Text style={styles.episodeText}>{this.props.code} - {this.props.title}</Text>
         </View>
       </TouchableNativeFeedback>
     );
@@ -46,12 +46,22 @@ var Episode = React.createClass({
 });
 
 var styles = StyleSheet.create({
-  rightContainer: {
+  episodeContainer: {
     flex: 1,
+    alignItems: 'center',
+    height : 70,
+    justifyContent: 'center',
+    borderColor: 'purple',
+
+    borderBottomWidth: 1,
+  },
+  episodeText: {
+    textAlign: 'auto',
+
+
   },
   title: {
-    fontSize: 20,
-    textAlign: 'center',
+
   },
 });
 

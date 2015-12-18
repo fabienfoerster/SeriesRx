@@ -64,6 +64,7 @@ var BetaseriesLogin = React.createClass({
   render: function() {
     return (
       <View>
+        <Text style={styles.title}>SerieRx</Text>
         <TextInput  value={this.state.login} onChangeText={(login) => this.setState({login})} placeholder="Enter your login" />
         <TextInput value={this.state.password} onChangeText={(password) => this.setState({password})}
           placeholder="Enter your password"
@@ -71,18 +72,41 @@ var BetaseriesLogin = React.createClass({
         <TouchableNativeFeedback
           onPress={this.betaseriesLogin}
           background={TouchableNativeFeedback.Ripple() }>
-          <View style={{width: 150, height: 100, backgroundColor: 'red'}}>
+          <View style={styles.loginButton}>
             <Text style={{margin: 30}}>Login</Text>
           </View>
         </TouchableNativeFeedback>
-        <View style={{ height: 100, backgroundColor: 'green'}}>
-          <Text> {this.state.loginError}</Text>
+        <View >
+          <Text style={{color:'red', textAlign:'center'}}> {this.state.loginError}</Text>
         </View>
       </View>
     );
 
   },
 
+});
+
+var styles = StyleSheet.create({
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  loginButton: {
+    backgroundColor: 'purple',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 50,
+    textAlign: 'center',
+    color: 'purple',
+  }
 });
 
 module.exports = BetaseriesLogin;

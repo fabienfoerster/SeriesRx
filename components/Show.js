@@ -19,7 +19,7 @@ var Show = React.createClass({
     return (
 
       <View style={styles.container}>
-        <Text>{this.props.show.title}</Text>
+        <Text style={styles.title}>{this.props.show.title}</Text>
         {this.props.show.unseen.map(episode => {
           return <Episode {...this.props} title={episode.title} code={episode.code} key={episode.id} id={episode.id}  />
         })}
@@ -36,17 +36,14 @@ var styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+
   },
   rightContainer: {
     flex: 1,
   },
   title: {
     fontSize: 20,
-    textAlign: 'center',
+    color: 'black'
   },
   year: {
     textAlign: 'center',
