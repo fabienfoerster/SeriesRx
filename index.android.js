@@ -1,118 +1,119 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
+* Sample React Native App
+* https://github.com/facebook/react-native
+*/
 'use strict';
 
 var React = require('react-native');
-
+var config = require('./config.js');
+var STORAGE_KEY = config.STORAGE_KEY;
 var {
   AppRegistry,
   Image,
   ListView,
+  ToolbarAndroid,
   StyleSheet,
   Text,
+  TextInput,
+  TouchableNativeFeedback,
   View,
+  AsyncStorage,
 } = React;
 
-var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
-var API_URL = 'http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json';
-var PAGE_SIZE = 25;
-var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
-var REQUEST_URL = API_URL + PARAMS;
+var UnseenShowList = require('./components/UnseenShowList');
+var BetaseriesLogin = require('./components/BetaseriesLogin');
+var toolbarActions = [
+  {title: 'Log out',},
+];
 
 var SeriesRx = React.createClass({
   getInitialState: function() {
     return {
-      dataSource: new ListView.DataSource({
-        rowHasChanged: (row1, row2) => row1 !== row2,
-      }),
-      loaded: false,
+      token : "",
+      apiKey : config.betaseries_key,
     };
   },
 
-  componentDidMount: function() {
-    this.fetchData();
+  async _loadToken() {
+    try {
+      var value = await AsyncStorage.getItem(STORAGE_KEY);
+      if(value != null) {
+        this.setState({
+          token : value,
+        });
+      }
+    } catch(error) {
+      console.log(error);
+    }
   },
 
-  fetchData: function() {
-    fetch(REQUEST_URL)
-      .then((response) => response.json())
-      .then((responseData) => {
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
-          loaded: true,
-        });
-      })
-      .done();
+  async _removeToken() {
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEY);
+      this.setState({
+        token: "",
+      });
+    } catch(error) {
+      console.log(error);
+    }
   },
+
+  componentDidMount: function() {
+    this._loadToken().done();
+  },
+
+
+
+  addToken: function(token) {
+    this.setState({
+      token: token,
+    });
+  },
+
+
+
+
+
+
 
   render: function() {
-    if (!this.state.loaded) {
-      return this.renderLoadingView();
+    if(! this.state.token) {
+      return (
+        <BetaseriesLogin apiKey={this.state.apiKey} addToken={this.addToken} />
+      );
     }
 
-    return (
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={this.renderMovie}
-        style={styles.listView}
-      />
-    );
-  },
 
-  renderLoadingView: function() {
+
     return (
-      <View style={styles.container}>
-        <Text>
-          Loading movies...
-        </Text>
+      <View style={{flex: 1}}>
+        <ToolbarAndroid
+          actions={toolbarActions}
+          onActionSelected={this._onActionSelected}
+          style={styles.toolbar}
+          title="SeriesRx" />
+        <UnseenShowList apiKey={this.state.apiKey} token={this.state.token} />
       </View>
     );
   },
 
-  renderMovie: function(movie) {
-    return (
-      <View style={styles.container}>
-        <Image
-          source={{uri: movie.posters.thumbnail}}
-          style={styles.thumbnail}
-        />
-        <View style={styles.rightContainer}>
-          <Text style={styles.title}>{movie.title}</Text>
-          <Text style={styles.year}>{movie.year}</Text>
-        </View>
-      </View>
-    );
+  _onActionSelected : function(position) {
+    if(position === 0) { // index of 'Log out'
+      this._removeToken().done();
+    }
   },
+
+
+
+
+
+
 });
 
 var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  rightContainer: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  year: {
-    textAlign: 'center',
-  },
-  thumbnail: {
-    width: 53,
-    height: 81,
-  },
-  listView: {
-    paddingTop: 20,
-    backgroundColor: '#F5FCFF',
+  toolbar: {
+    backgroundColor: 'purple',
+    height: 56,
   },
 });
 
