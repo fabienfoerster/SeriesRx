@@ -2,22 +2,24 @@
 
 var React = require('react-native');
 var {
-  View,
-  Text,
   TouchableNativeFeedback,
   StyleSheet,
 } = React;
 
+var { createAnimatableComponent,View, Text } = require('react-native-animatable');
+
 var Episode = React.createClass({
   render: function() {
     return (
-      <TouchableNativeFeedback
-        background={TouchableNativeFeedback.Ripple()}
-        onPress={this.watchedEpisode}>
-        <View style={styles.episodeContainer}>
-          <Text style={styles.episodeText}>{this.props.code} - {this.props.title}</Text>
-        </View>
-      </TouchableNativeFeedback>
+      <View style={styles.episodeContainer} animation="lightSpeedIn">
+        <TouchableNativeFeedback
+          background={TouchableNativeFeedback.Ripple()}
+          onPress={this.watchedEpisode}>
+          <View >
+            <Text style={styles.episodeText}  >{this.props.code} - {this.props.title}</Text>
+          </View>
+        </TouchableNativeFeedback>
+      </View>
     );
   },
 
@@ -51,13 +53,11 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     height : 70,
     justifyContent: 'center',
-    borderColor: 'purple',
-
-    borderBottomWidth: 1,
+    marginBottom: 3,
+    backgroundColor: 'lightgray',
   },
   episodeText: {
     textAlign: 'auto',
-
 
   },
   title: {
