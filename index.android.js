@@ -18,13 +18,11 @@ var {
   TouchableNativeFeedback,
   View,
   AsyncStorage,
+  DrawerLayoutAndroid,
 } = React;
 
 var UnseenShowList = require('./components/UnseenShowList');
 var BetaseriesLogin = require('./components/BetaseriesLogin');
-var toolbarActions = [
-  {title: 'Log out',},
-];
 
 var SeriesRx = React.createClass({
   getInitialState: function() {
@@ -75,8 +73,22 @@ var SeriesRx = React.createClass({
 
 
 
-
   render: function() {
+    var navigationView = (
+
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <TouchableNativeFeedback
+          background={TouchableNativeFeedback.Ripple()}
+          onPress={this._removeToken}>
+          <View>
+            <Text style={{margin: 10, fontSize: 15, textAlign: 'left'}}>Log out</Text>
+          </View>
+        </TouchableNativeFeedback>
+      </View>
+
+    );
+
+
     if(! this.state.token) {
       return (
         <BetaseriesLogin apiKey={this.state.apiKey} addToken={this.addToken} />
@@ -86,22 +98,24 @@ var SeriesRx = React.createClass({
 
 
     return (
-      <View style={{flex: 1}}>
-        <ToolbarAndroid
-          actions={toolbarActions}
-          onActionSelected={this._onActionSelected}
-          style={styles.toolbar}
-          title="SeriesRx" />
-        <UnseenShowList apiKey={this.state.apiKey} token={this.state.token} />
-      </View>
+      <DrawerLayoutAndroid
+        drawerWidth={300}
+        ref={'DRAWER'}
+        drawerPosition={DrawerLayoutAndroid.positions.Left}
+        renderNavigationView={() => navigationView}>
+        <View style={{flex: 1}}>
+          <ToolbarAndroid
+            navIcon={require('./img/menu.png')}
+            logo={require('./img/menu.png')}
+            onIconClicked={ () => this.refs['DRAWER'].openDrawer()}
+            style={styles.toolbar}
+            title="SeriesRx" />
+          <UnseenShowList apiKey={this.state.apiKey} token={this.state.token} />
+        </View>
+      </DrawerLayoutAndroid>
     );
   },
 
-  _onActionSelected : function(position) {
-    if(position === 0) { // index of 'Log out'
-      this._removeToken().done();
-    }
-  },
 
 
 

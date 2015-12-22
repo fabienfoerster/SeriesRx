@@ -15,7 +15,7 @@ var Episode = React.createClass({
         <TouchableNativeFeedback
           background={TouchableNativeFeedback.Ripple()}
           onPress={this.watchedEpisode}>
-          <View >
+          <View style={styles.episodeContainer}>
             <Text style={styles.episodeText}  >{this.props.code} - {this.props.title}</Text>
           </View>
         </TouchableNativeFeedback>
