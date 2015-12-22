@@ -106,7 +106,6 @@ var SeriesRx = React.createClass({
         <View style={{flex: 1}}>
           <ToolbarAndroid
             navIcon={require('./img/menu.png')}
-            logo={require('./img/menu.png')}
             onIconClicked={ () => this.refs['DRAWER'].openDrawer()}
             style={styles.toolbar}
             title="SeriesRx" />
