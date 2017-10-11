@@ -3,10 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "react-native start"
+    "start": "react-native start",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "md5": "^2.0.0",
-    "react-native": "^0.16.0"
-  }
+    "react-native": "^0.39.1",
+    "snyk": "^1.42.5"
+  },
+  "snyk": true
 }
