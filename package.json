@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "md5": "^2.0.0",
-    "react-native": "^0.16.0"
+    "react-native": "^0.30.0"
   }
 }
